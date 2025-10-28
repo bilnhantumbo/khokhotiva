@@ -94,17 +94,16 @@ def add_product():
                     unique_filename = f"{uuid.uuid4()}.{file_extension}"
                     print(f"DEBUG: Nome único gerado: {unique_filename}")
                     
-                    # Upload para Supabase - VERSÃO SIMPLIFICADA
+                    # Upload para Supabase
                     image_data = image.read()
                     print("DEBUG: Fazendo upload para Supabase...")
                     
-                    # REMOVER AS OPÇÕES EXTRA QUE CAUSAM ERRO
                     upload_result = supabase.storage.from_('produtos').upload(unique_filename, image_data)
                     
                     print(f"DEBUG: Resultado do upload: {upload_result}")
                     
                     if upload_result:
-                        # Criar URL manualmente (mais confiável)
+                        # Criar URL manualmente
                         image_url = f"https://jjjiwdepcgvvzeflwxaq.supabase.co/storage/v1/object/public/produtos/{unique_filename}"
                         print(f"DEBUG: URL da imagem: {image_url}")
                     else:
@@ -124,12 +123,22 @@ def add_product():
     
     print(f"DEBUG: URL final da imagem: {image_url}")
     
-    # Inserir na base de dados
+    # INSERIR NA BASE DE DADOS - VERSÃO CORRIGIDA
     conn = sqlite3.connect('khokotiva.db')
     c = conn.cursor()
+    
+    # DEBUG: Verificar o que vamos inserir
+    print(f"DEBUG A INSERIR: name={name}, category={category}, price={price}, image_url={image_url}")
+    
     c.execute("INSERT INTO products (name, category, price, image_url) VALUES (?, ?, ?, ?)", 
               (name, category, price, image_url))
     conn.commit()
+    
+    # Verificar se foi inserido
+    c.execute("SELECT * FROM products WHERE id = (SELECT MAX(id) FROM products)")
+    last_product = c.fetchone()
+    print(f"DEBUG PRODUTO INSERIDO: {last_product}")
+    
     conn.close()
     
     print("DEBUG: Produto inserido na base de dados")
