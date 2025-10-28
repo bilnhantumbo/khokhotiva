@@ -241,20 +241,55 @@
     </div>
 
     <script>
-        let cart = [];
+        let cart = JSON.parse(localStorage.getItem('khokhotiva_cart')) || [];
 
         function addToCart(productId, productName, price) {
-            cart.push({
-                id: productId,
-                name: productName,
-                price: price
-            });
+            // Verificar se o produto já está no carrinho
+            const existingItem = cart.find(item => item.id === productId);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    id: productId,
+                    name: productName,
+                    price: price,
+                    quantity: 1
+                });
+            }
+            
+            saveCart();
             updateCartCount();
             alert(`${productName} adicionado ao carrinho!`);
         }
 
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            saveCart();
+            updateCartCount();
+            alert('Produto removido do carrinho!');
+        }
+
+        function updateQuantity(productId, change) {
+            const item = cart.find(item => item.id === productId);
+            if (item) {
+                item.quantity += change;
+                if (item.quantity <= 0) {
+                    removeFromCart(productId);
+                } else {
+                    saveCart();
+                    updateCartCount();
+                }
+            }
+        }
+
+        function saveCart() {
+            localStorage.setItem('khokhotiva_cart', JSON.stringify(cart));
+        }
+
         function updateCartCount() {
-            document.getElementById('cart-count').textContent = cart.length;
+            const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+            document.getElementById('cart-count').textContent = totalItems;
         }
 
         function viewCart() {
@@ -263,21 +298,115 @@
                 return;
             }
 
-            let message = "Pedido Khokhotiva 🛒\\n\\n";
+            // Criar modal do carrinho
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.5);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 2000;
+            `;
+
+            let total = 0;
+            let cartContent = `
+                <div style="background: white; padding: 30px; border-radius: 15px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto;">
+                    <h2 style="color: #2e7d32; margin-bottom: 20px; text-align: center;">🛒 Meu Carrinho</h2>
+                    <div style="max-height: 300px; overflow-y: auto; margin-bottom: 20px;">
+            `;
+
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                
+                cartContent += `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee;">
+                        <div style="flex: 1;">
+                            <strong>${item.name}</strong><br>
+                            <small>${item.price} MZN × ${item.quantity}</small>
+                        </div>
+                        <div style="font-weight: bold; color: #e65100;">${itemTotal} MZN</div>
+                        <div style="display: flex; gap: 10px; margin-left: 15px;">
+                            <button onclick="updateQuantity(${item.id}, -1)" style="background: #ff4444; color: white; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer;">-</button>
+                            <button onclick="updateQuantity(${item.id}, 1)" style="background: #4caf50; color: white; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer;">+</button>
+                            <button onclick="removeFromCart(${item.id})" style="background: #ff9800; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">🗑️</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            cartContent += `
+                    </div>
+                    <div style="border-top: 2px solid #4caf50; padding-top: 15px;">
+                        <div style="display: flex; justify-content: space-between; font-size: 1.2em; font-weight: bold; margin-bottom: 20px;">
+                            <span>Total:</span>
+                            <span style="color: #e65100;">${total} MZN</span>
+                        </div>
+                        <div style="display: flex; gap: 10px; justify-content: center;">
+                            <button onclick="clearCart()" style="background: #ff4444; color: white; border: none; padding: 12px 20px; border-radius: 25px; cursor: pointer;">Esvaziar Carrinho</button>
+                            <button onclick="sendWhatsApp()" style="background: #25D366; color: white; border: none; padding: 12px 20px; border-radius: 25px; cursor: pointer;">📞 Enviar por WhatsApp</button>
+                        </div>
+                        <button onclick="document.body.removeChild(this.parentElement.parentElement)" style="background: #666; color: white; border: none; padding: 10px 20px; border-radius: 25px; cursor: pointer; margin-top: 15px; width: 100%;">Fechar</button>
+                    </div>
+                </div>
+            `;
+
+            modal.innerHTML = cartContent;
+            document.body.appendChild(modal);
+
+            // Fechar modal ao clicar fora
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    document.body.removeChild(modal);
+                }
+            });
+        }
+
+        function clearCart() {
+            if (confirm('Tem certeza que quer esvaziar o carrinho?')) {
+                cart = [];
+                saveCart();
+                updateCartCount();
+                document.querySelectorAll('div').forEach(el => {
+                    if (el.style.position === 'fixed') {
+                        document.body.removeChild(el);
+                    }
+                });
+                alert('Carrinho esvaziado!');
+            }
+        }
+
+        function sendWhatsApp() {
+            if (cart.length === 0) {
+                alert('Carrinho vazio!');
+                return;
+            }
+
+            let message = "🛒 *PEDIDO KHOKHOTIVA* 🛒\\n\\n";
             let total = 0;
 
             cart.forEach(item => {
-                message += `Produto: ${item.name} - ${item.price} MZN\\n`;
-                total += item.price;
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                message += `• ${item.name} (${item.quantity}x) - ${itemTotal} MZN\\n`;
             });
 
-            message += `\\nTotal: ${total} MZN\\n\\n`;
-            message += "Enviando o comprovante de pagamento para +258 861222095";
+            message += `\\n💰 *TOTAL: ${total} MZN*\\n\\n`;
+            message += "📍 *Entrega:* Gaza, Chókwè, ISPG\\n";
+            message += "📞 *Contacto:* +258 861222095\\n\\n";
+            message += "_Enviarei o comprovante de pagamento por WhatsApp_";
 
-            // Abrir WhatsApp
             const whatsappUrl = `https://wa.me/258861222095?text=${encodeURIComponent(message)}`;
             window.open(whatsappUrl, '_blank');
         }
+
+        // Inicializar contador do carrinho
+        updateCartCount();
     </script>
 </body>
 </html>
