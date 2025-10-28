@@ -251,7 +251,9 @@
 </head>
 <body>
     
+    <!-- === CABEÇALHO HTML ATUALIZADO === -->
     <header class="header">
+        <!-- Conteúdo da Esquerda -->
         <div class="header-left-content">
             <div class="logo">Bem vindo à Khokhotiva</div>
             <div class="slogan">Sua loja online de alimentos frescos e de qualidade</div>
@@ -262,10 +264,15 @@
             </div>
         </div>
         
+        <!-- Botão Admin à Direita -->
         <div class="header-right-admin">
             <a href="/login" class="admin-btn">Área de Administração</a>
         </div>
     </header>
+    <!-- === FIM DA ATUALIZAÇÃO === -->
+
+
+    <!-- CATEGORIAS -->
     <section class="categories">
         <button class="category-btn">Todos os Produtos</button>
         <button class="category-btn">Frutas</button>
@@ -275,17 +282,27 @@
         <button class="category-btn">Outros</button>
     </section>
 
+    <!-- PRODUTOS -->
     <section class="products-grid">
         {% for product in products %}
         <div class="product-card">
-            {% if product[5] %}
-                <img src="{{ product[5] }}" alt="{{ product[1] }}" class="product-image">
+            
+            <!-- 
+                ***** CORREÇÃO IMPORTANTE AQUI *****
+                Mudei de product[5] para product[4] para buscar a URL da imagem.
+                O banco de dados agora retorna (id[0], name[1], category[2], price[3], image_url[4])
+            -->
+            {% if product[4] %}
+                <img src="{{ product[4] }}" alt="{{ product[1] }}" class="product-image">
             {% else %}
                 <img src="https://via.placeholder.com/250x200/4caf50/white?text=Sem+Imagem" alt="Sem imagem" class="product-image">
             {% endif %}
+            
             <div class="product-name">{{ product[1] }}</div>
             <div class="product-category">{{ product[2] }}</div>
             <div class="product-price">{{ product[3] }} MZN</div>
+            
+            <!-- O product[0] (id) continua correto -->
             <button class="add-to-cart" onclick="addToCart({{ product[0] }}, '{{ product[1] }}', {{ product[3] }})">
                 🛒 Adicionar ao Carrinho
             </button>
@@ -293,11 +310,13 @@
         {% endfor %}
     </section>
 
+    <!-- CARRINHO FLUTUANTE -->
     <div class="cart-floating" onclick="viewCart()">
         <span class="cart-icon">🛒</span>
         <span id="cart-count">0</span> itens
     </div>
 
+    <!-- RODAPÉ -->
     <footer class="footer">
         <div class="footer-container">
             <div class="footer-column">
@@ -320,6 +339,7 @@
     </footer>
 
 
+    <!-- SCRIPT DO CARRINHO (Sem alterações) -->
     <script>
         let cart = JSON.parse(localStorage.getItem('khokhotiva_cart')) || [];
 
