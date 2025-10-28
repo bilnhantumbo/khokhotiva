@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Khokhotiva</title>
+</head>
+<body>
+    <h1>Bem-vindo à Khokhotiva!</h1>
+    
+    <h2>Produtos:</h2>
+    {% for product in products %}
+        <div>
+            <h3>{{ product[1] }}</h3>
+            <p>Categoria: {{ product[2] }}</p>
+            <p>Preço: {{ product[3] }} MZN</p>
+        </div>
+    {% endfor %}
+    
+    <a href="/login">Administração</a>
+</body>
+</html>
