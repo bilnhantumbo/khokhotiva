@@ -82,7 +82,7 @@ def admin():
     products = get_products()
     return render_template('admin.html', products=products)
 
-# ===== FUNÇÃO ATUALIZADA =====
+# ===== FUNÇÃO ATUALIZADA (COM A CORREÇÃO) =====
 @app.route('/add_product', methods=['POST'])
 def add_product():
     if not session.get('logged_in'):
@@ -94,7 +94,6 @@ def add_product():
     
     print(f"DEBUG: Adicionando produto: {name}, {category}, {price}")
     
-    # Processar imagem (Seu código de upload já estava correto!)
     image_url = None
     if 'image' in request.files:
         image = request.files['image']
@@ -108,6 +107,8 @@ def add_product():
             print(f"DEBUG: Tamanho do arquivo: {file_size} bytes")
             
             if file_size <= MAX_FILE_SIZE:
+                
+                # --- INÍCIO DA CORREÇÃO ---
                 try:
                     file_extension = image.filename.rsplit('.', 1)[1].lower()
                     unique_filename = f"{uuid.uuid4()}.{file_extension}"
@@ -116,26 +117,30 @@ def add_product():
                     image_data = image.read()
                     print("DEBUG: Fazendo upload para Supabase Storage...")
                     
-                    # CORREÇÃO: Passar o content_type explicitamente
                     content_type = image.content_type
-                    upload_result = supabase.storage.from_('produtos').upload(
+                    
+                    # Esta linha agora está correta. 
+                    # Ela vai dar erro (e ser pega pelo 'except') se o upload falhar.
+                    supabase.storage.from_('produtos').upload(
                         unique_filename, 
                         image_data,
                         file_options={"content-type": content_type}
                     )
                     
-                    print(f"DEBUG: Resultado do upload: {upload_result.status_code}")
+                    # Se chegamos aqui, o upload funcionou.
+                    print(f"DEBUG: Upload para Supabase bem-sucedido.")
                     
-                    if upload_result.status_code == 200:
-                        image_url = f"https://jjjiwdepcgvvzeflwxaq.supabase.co/storage/v1/object/public/produtos/{unique_filename}"
-                        print(f"DEBUG: URL da imagem: {image_url}")
-                    else:
-                        print(f"DEBUG: Erro no upload para Supabase: {upload_result.text}")
-                        return f"Erro ao fazer upload da imagem: {upload_result.text}"
+                    # Agora podemos criar a URL
+                    image_url = f"https://jjjiwdepcgvvzeflwxaq.supabase.co/storage/v1/object/public/produtos/{unique_filename}"
+                    print(f"DEBUG: URL da imagem: {image_url}")
                         
                 except Exception as e:
+                    # O erro de upload (ou qualquer outro) será pego aqui
                     print(f"DEBUG: Erro no upload para Supabase: {e}")
+                    # Retorna o erro real que o Supabase deu
                     return f"Erro ao fazer upload da imagem: {e}"
+                # --- FIM DA CORREÇÃO ---
+                    
             else:
                 print(f"DEBUG: Arquivo muito grande: {file_size} bytes")
                 return "Arquivo muito grande! Máximo 5MB."
@@ -197,3 +202,4 @@ def logout():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
