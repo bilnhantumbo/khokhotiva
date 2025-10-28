@@ -16,40 +16,59 @@
             background-color: #f5f5f5;
         }
 
-        /* CABEÇALHO VERDE */
+        /* === CABEÇALHO ATUALIZADO === */
         .header {
             background: linear-gradient(135deg, #2e7d32, #4caf50);
             color: white;
-            padding: 20px 0;
-            text-align: center;
+            padding: 20px 40px; /* Aumentei o padding lateral */
             box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            
+            /* Novas regras para alinhar */
+            display: flex;
+            justify-content: space-between; /* Joga um item para a esquerda e outro para a direita */
+            align-items: center; /* Alinha verticalmente */
+            flex-wrap: wrap; /* Permite quebrar a linha em telas menores */
+            gap: 20px; /* Espaço entre os itens se quebrar */
+        }
+
+        .header-left-content {
+            flex: 1; /* Ocupa o espaço disponível */
+            min-width: 300px; /* Largura mínima */
+        }
+        
+        .header-right-admin {
+            /* O botão admin agora fica aqui */
         }
 
         .logo {
-            font-size: 2.5em;
+            font-size: 2.0em; /* Diminuí um pouco para o texto novo */
             font-weight: bold;
             margin-bottom: 10px;
         }
 
         .slogan {
-            font-size: 1.2em;
+            font-size: 1.1em; /* Ajustei o tamanho */
             margin-bottom: 15px;
             opacity: 0.9;
         }
 
-        .contact-info {
+        /* Estilo para a nova linha de contato */
+        .header-contact {
             display: flex;
-            justify-content: center;
-            gap: 30px;
             flex-wrap: wrap;
-            margin-top: 15px;
+            gap: 20px; /* Espaço entre os ícones de contato */
+            font-size: 0.9em;
+            opacity: 0.9;
         }
-
-        .contact-item {
+        
+        .header-contact span {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 5px;
         }
+
+        /* === FIM DAS MUDANÇAS NO CABEÇALHO === */
+
 
         /* CATEGORIAS */
         .categories {
@@ -144,27 +163,23 @@
             background: #f57c00;
         }
 
-        /* ADMIN LINK */
-        .admin-link {
-            text-align: center;
-            padding: 20px;
-            background: white;
-            margin: 20px;
-            border-radius: 10px;
-        }
-
+        /* === ESTILO ATUALIZADO DO BOTÃO ADMIN === */
         .admin-btn {
-            background: #2196f3;
+            background: rgba(255, 255, 255, 0.2); /* Fundo branco semi-transparente */
             color: white;
             padding: 12px 25px;
             text-decoration: none;
             border-radius: 25px;
             transition: background 0.3s;
+            border: 1px solid white; /* Borda branca */
+            font-weight: bold;
         }
 
         .admin-btn:hover {
-            background: #1976d2;
+            background: rgba(255, 255, 255, 0.4); /* Mais opaco no hover */
         }
+        /* === FIM DA MUDANÇA === */
+
 
         /* CARRINHO FIXO */
         .cart-floating {
@@ -187,28 +202,28 @@
             font-size: 1.5em;
         }
 
-        /* === INÍCIO DO CÓDIGO DO RODAPÉ (CSS) === */
+        /* RODAPÉ */
         .footer {
-            background-color: #1976d2; /* Fundo azul, como pedido */
-            color: #ffffff; /* Cor do texto branca para contraste */
+            background-color: #1976d2; /* Fundo azul */
+            color: #ffffff; 
             padding: 40px 20px;
-            margin-top: 30px; /* Espaço acima do rodapé */
+            margin-top: 30px; 
         }
 
         .footer-container {
             display: flex;
-            justify-content: space-between; /* Organiza as colunas */
-            flex-wrap: wrap; /* Permite quebrar em telas menores */
+            justify-content: space-between; 
+            flex-wrap: wrap; 
             gap: 30px;
             max-width: 1200px;
             margin: 0 auto;
             padding-bottom: 20px;
-            border-bottom: 1px solid #42a5f5; /* Linha sutil de separação (azul mais claro) */
+            border-bottom: 1px solid #42a5f5; 
         }
 
         .footer-column {
-            flex: 1; /* Faz as colunas terem largura igual */
-            min-width: 250px; /* Largura mínima antes de quebrar */
+            flex: 1; 
+            min-width: 250px; 
         }
 
         .footer-column h4 {
@@ -223,30 +238,34 @@
 
         .footer-column p {
             line-height: 1.6;
-            color: #e3f2fd; /* Texto em azul bem claro */
+            color: #e3f2fd; 
         }
 
         .footer-bottom {
             text-align: center;
             padding-top: 20px;
             font-size: 0.9em;
-            color: #bbdefb; /* Cor do copyright (azul claro) */
+            color: #bbdefb; 
         }
-        /* === FIM DO CÓDIGO DO RODAPÉ (CSS) === */
-
     </style>
 </head>
 <body>
+    
     <header class="header">
-        <div class="logo">🌱 Khokhotiva</div>
-        <div class="slogan">Sua loja online de alimentos frescos e de qualidade</div>
-        <div class="contact-info">
-            <div class="contact-item">📍 Gaza, Chókwè, ISPG</div>
-            <div class="contact-item">📞 +258 861222095</div>
-            <div class="contact-item">✉️ contato@khokhotiva.com</div>
+        <div class="header-left-content">
+            <div class="logo">Bem vindo à Khokhotiva</div>
+            <div class="slogan">Sua loja online de alimentos frescos e de qualidade</div>
+            <div class="header-contact">
+                <span>📍 Gaza, Chókwè, ISPG</span>
+                <span>📞 +258 861222095</span>
+                <span>✉️ contato@khokhotiva.com</span>
+            </div>
+        </div>
+        
+        <div class="header-right-admin">
+            <a href="/login" class="admin-btn">Área de Administração</a>
         </div>
     </header>
-
     <section class="categories">
         <button class="category-btn">Todos os Produtos</button>
         <button class="category-btn">Frutas</button>
@@ -274,14 +293,32 @@
         {% endfor %}
     </section>
 
-    <div class="admin-link">
-        <a href="/login" class="admin-btn">Área de Administração</a>
-    </div>
-
     <div class="cart-floating" onclick="viewCart()">
         <span class="cart-icon">🛒</span>
         <span id="cart-count">0</span> itens
     </div>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-column">
+                <h4>Sobre Khokhotiva</h4>
+                <p>Produtos Produzidos localmente.</p>
+            </div>
+            <div class="footer-column">
+                <h4>Localização</h4>
+                <p>Mozambique, Gaza, Chokwe, ISPG, FARMA</p>
+            </div>
+            <div class="footer-column">
+                <h4>Contato</h4>
+                <p>Email: contato@khokhotiva.com</p>
+                <p>Telefone: +258 861222095</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2025 Khokhotiva. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
 
     <script>
         let cart = JSON.parse(localStorage.getItem('khokhotiva_cart')) || [];
@@ -311,7 +348,7 @@
             saveCart();
             updateCartCount();
             // Atualizar o modal se estiver aberto
-            const modal = document.querySelector('div[style*="position: fixed"]');
+            const modal = document.getElementById('cart-modal');
             if (modal) {
                 document.body.removeChild(modal);
                 viewCart(); // Reabrir o modal atualizado
@@ -330,7 +367,7 @@
                     saveCart();
                     updateCartCount();
                     // Atualizar o modal se estiver aberto
-                    const modal = document.querySelector('div[style*="position: fixed"]');
+                    const modal = document.getElementById('cart-modal');
                     if (modal) {
                         document.body.removeChild(modal);
                         viewCart(); // Reabrir o modal atualizado
@@ -471,26 +508,6 @@
         // Inicializar contador do carrinho
         updateCartCount();
     </script>
-
-    <footer class="footer">
-        <div class="footer-container">
-            <div class="footer-column">
-                <h4>Sobre Khokhotiva</h4>
-                <p>Produtos Produzidos localmente.</p>
-            </div>
-            <div class="footer-column">
-                <h4>Localização</h4>
-                <p>Mozambique, Gaza, Chokwe, ISPG, FARMA</p>
-            </div>
-            <div class="footer-column">
-                <h4>Contato</h4>
-                <p>Email: contato@khokhotiva.com</p>
-                <p>Telefone: +258 861222095</p>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>© 2025 Khokhotiva. Todos os direitos reservados.</p>
-        </div>
-    </footer>
-    </body>
+    
+</body>
 </html>
